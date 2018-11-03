@@ -250,43 +250,47 @@ public class IterativeListManipulator implements IListManipulator {
         }
 
         ListNode flatHead = head;
-        ListNode flat = flatHead;
+        ListNode flat = null;
         ListNode current = head;
 
-        current = current.next;
+        HashSet<ListNode> set = new HashSet<>();
+        
+        do {
 
-        while (current != null && current != head) {
-
-            System.out.println("!");
+            set.add(current);
 
             if (current.element instanceof ListNode) {
 
-                System.out.println("!!!");
                 ListNode tempHead = (ListNode) current.element;
-                flat.next = (ListNode) current.element;
+                if (flat == null) {
+                    flat = (ListNode) current.element;
+                    flatHead = flat;
+                } else {
+                    flat.next = (ListNode) current.element;
+                }
 
                 while (flat.next != null && flat.next != tempHead) {
                     flat = flat.next;
-                    System.out.println(flat.element);
                 }
 
             } else {
-                flat.next = current;
+                if (flat == null) {
+                    flat = current;
+                    flatHead = flat;
+                } else {
+                    flat.next = current;
+                }
             }
 
             current = current.next;
 
-            if (current != null) {
+            if (flat.next != null) {
 
                 flat = flat.next;
             }
-        }
 
-//        ListNode temp = head;
-//        while (temp != null) {
-//            System.out.println(temp.element);
-//            temp = temp.next;
-//        }
+        } while (current != null && current != head && !set.contains(current));
+
         return flatHead;
     }
 

@@ -114,8 +114,10 @@ public class RecursiveListManipulator implements IListManipulator {
     public boolean containsDuplicates(ListNode head) {
 
         // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        if (head.next == null) {
+        if (head == null || head.next == null) {
             return false;
+        } else if (head.element.equals(head.next.element)) {
+            return true;
         } else {
             return containsDuplicates(head.next);
         }
@@ -192,13 +194,12 @@ public class RecursiveListManipulator implements IListManipulator {
     @Override
     public Object reduce(ListNode head, IOperator operator, Object initial) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if (head == null) {
-            return null;
+            return initial;
         }
         if (head.next == null) {
-            return operator.operate(initial, head.element);
+            return operator.operate(head.element, initial);
         } else {
-            //initial = operator.operate(initial, head.element);
-            return operator.operate(reduce(head.next, operator, initial), head.element);
+            return operator.operate(head.element, reduce(head.next, operator, initial));
         }
     }
 
