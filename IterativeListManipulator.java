@@ -257,12 +257,12 @@ public class IterativeListManipulator implements IListManipulator {
         
         do {
 
-            set.add(current);
+            set.add(current); // Checks for circular lists
 
             if (current.element instanceof ListNode) {
 
                 ListNode tempHead = (ListNode) current.element;
-                if (flat == null) {
+                if (flat == null) { //If the first element is a listNode, then this value should not be assigned as the head, but rather its element
                     flat = (ListNode) current.element;
                     flatHead = flat;
                 } else {
@@ -318,6 +318,7 @@ public class IterativeListManipulator implements IListManipulator {
 
     @Override
     public boolean containsCycles(ListNode head) {
+
         HashSet<Object> set = new HashSet<>();
 
         if (head == null) {
@@ -341,14 +342,34 @@ public class IterativeListManipulator implements IListManipulator {
     @Override
     public ListNode sort(ListNode head, Comparator comparator) {
 
-        if (head == null && head.next == null) {
+        if (head == null || head.next == null) {
             return head;
         }
 
+        ListNode current = head;
 
+        boolean swap = true;
 
-        // TODO Auto-generated method stub
-        return null;
+        while (swap) {
+
+            if (current.next == null) {
+
+                swap = false;
+
+            } else if (comparator.compare(current.element, current.next.element) > 0) {
+
+                Object swapElement = current.element;
+                current.element = current.next.element;
+                current.next.element = swapElement;
+                current = head;
+
+            } else {
+
+                current = current.next;
+            }
+        }
+
+        return head;
     }
 
     @Override

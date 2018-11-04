@@ -1,6 +1,8 @@
 package impl;
 
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import common.InvalidIndexException;
 import common.ListNode;
@@ -110,16 +112,36 @@ public class RecursiveListManipulator implements IListManipulator {
         }
     }
 
+    HashSet<Object> elementSet = new HashSet<>();
+
     @Override
     public boolean containsDuplicates(ListNode head) {
 
-        // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        if (head == null || head.next == null) {
+//        // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//        if (head == null || head.next == null) {
+//            return false;
+//        } else if (head.element.equals(head.next.element)) {
+//            return true;
+//        } else {
+//            return containsDuplicates(head.next);
+//        }
+
+        if (head == null) {
+            System.out.println("false");
+            System.out.println();
+            elementSet.clear();
             return false;
-        } else if (head.element.equals(head.next.element)) {
-            return true;
         } else {
-            return containsDuplicates(head.next);
+            if (elementSet.contains(head.element)) {
+                System.out.println(head.element + " 111");
+                System.out.println();
+                elementSet.clear();
+                return true;
+            } else {
+                elementSet.add(head.element);
+                System.out.println(head.element + " 222");
+                return containsDuplicates(head.next);
+            }
         }
     }
 
@@ -161,22 +183,96 @@ public class RecursiveListManipulator implements IListManipulator {
         }
     }
 
+    HashMap<ListNode, ListNode> map = new HashMap<>();
+
     @Override
     public boolean isCircular(ListNode head) {
-        // TODO Auto-generated method stub
-        return false;
+        if (head == null) {
+            map.clear();
+            return false;
+        } else if (head.next == null) {
+            map.clear();
+            return false;
+        } else {
+            if (map.containsKey(head.next)) {
+                if (map.get(head.next) == head) {
+                    map.clear();
+                    return true;
+                } else {
+                    map.clear();
+                    return false;
+                }
+            } else {
+                map.put(head.next, head);
+                return isCircular(head.next);
+            }
+        }
     }
+
+    HashSet<ListNode> set = new HashSet<>();
 
     @Override
     public boolean containsCycles(ListNode head) {
-        // TODO Auto-generated method stub
-        return false;
+        if (head == null) {
+            set.clear();
+            return false;
+        } else if (head.next == null) {
+            set.clear();
+            return false;
+        } else {
+            if (set.contains(head.next)) {
+                set.clear();
+                return true;
+            } else {
+                set.add(head);
+                return containsCycles(head.next);
+            }
+        }
     }
 
     @Override
-    public ListNode sort(ListNode head, Comparator comparator) {
-        // TODO Auto-generated method stub
-        return null;
+    public ListNode sort(ListNode head, Comparator comparator) { //!!!!!!!!!!!!!!!!1
+
+        if (head == null) {
+
+            return null;
+
+        } else if (head.next == null) {
+
+            System.out.println(head.element + "end");
+            System.out.println();
+
+            return head;
+
+        } else if (comparator.compare(head.element, head.next.element) > 0) {
+
+            System.out.println(head.element + " 111");
+
+            Object swapElement = head.element;
+            head.element = head.next.element;
+            head.next.element = swapElement;
+
+            System.out.println(head.element + " 000");
+
+            sort(head, comparator);
+
+            return head; //!!!!!!!!!!!!!111
+
+        } else if (sort(head.next, comparator) == head.next && head.next.next != null) {
+
+            System.out.println(head.element + " 222");
+
+            //head.next = sort(head, comparator);
+
+            return sort(head, comparator);
+
+        } else {
+
+            System.out.println(head.element + " 333");
+
+            return sort(head.next, comparator);
+        }
+
     }
 
     @Override
