@@ -79,7 +79,7 @@ public class RecursiveListManipulator implements IListManipulator {
         if (head == null) {
             throw new InvalidIndexException();
         }
-        if (size(head) - 1 == n) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   HIGH COMPLEXITY
+        if (size(head) - 1 == n) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   HIGH COMPLEXITY
             return head.element;
         } else {
             return getFromFront(head.next, n);
@@ -112,36 +112,36 @@ public class RecursiveListManipulator implements IListManipulator {
         }
     }
 
-    HashSet<Object> elementSet = new HashSet<>();
+    private boolean checkDuplicates(ListNode head, HashSet<Object> elementSet) {
+        if (head == null) {
+            return false;
+        } else {
+            if (elementSet.contains(head.element)) {
+                return true;
+            } else {
+                elementSet.add(head.element);
+                return checkDuplicates(head.next, elementSet);
+            }
+        }
+    }
 
     @Override
     public boolean containsDuplicates(ListNode head) {
 
-//        // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//        if (head == null || head.next == null) {
-//            return false;
-//        } else if (head.element.equals(head.next.element)) {
-//            return true;
-//        } else {
-//            return containsDuplicates(head.next);
-//        }
-
         if (head == null) {
-            System.out.println("false");
-            System.out.println();
-            elementSet.clear();
             return false;
+        }
+
+        return checkDuplicates(head, new HashSet<>());
+    }
+
+    private ListNode appendList(ListNode head1, ListNode head2) { //This method reduces the number of checks per method call
+        if (head1.next == null) {
+            head1.next = head2;
+            return head1;
         } else {
-            if (elementSet.contains(head.element)) {
-                System.out.println(head.element + " 111");
-                System.out.println();
-                elementSet.clear();
-                return true;
-            } else {
-                elementSet.add(head.element);
-                System.out.println(head.element + " 222");
-                return containsDuplicates(head.next);
-            }
+            head1.next = append(head1.next, head2);
+            return head1;
         }
     }
 
@@ -153,123 +153,112 @@ public class RecursiveListManipulator implements IListManipulator {
         if (head1 == null) {
             return head2;
         }
-        if (head1.next == null) {
-            return new ListNode(head1.element, head2);
-        } else {
-            return new ListNode(head1.element, append(head1.next, head2));
-        }
+        return appendList(head1, head2);
     }
 
     @Override
-    public ListNode flatten(ListNode head) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public ListNode flatten(ListNode head) {
         if (head == null) {
             return null;
         }
-        if (head.next == null) {
-            System.out.println("!!!!");
-            return new ListNode(head.element, head);
-        }
         if (head.element instanceof ListNode) {
-            if (((ListNode) head.element).next != null) {
-                System.out.println("!");
-                return new ListNode(((ListNode) head.element).element, flatten(((ListNode) head.element).next));
-            } else {
-                System.out.println("!!");
-                return new ListNode(((ListNode) head.element).element);
-            }
-        } else {
-            System.out.println("!!!");
-            return new ListNode(head.element, flatten(head.next));
+
+            ListNode next = head.next;
+
+            head.next = ((ListNode) head.element).next;
+            head.element = ((ListNode) head.element).element;
+
+            head = append(head, next); // High Complexity, but easier to understand and debug
         }
+
+        head.next = flatten(head.next);
+        return head;
     }
 
-    HashMap<ListNode, ListNode> map = new HashMap<>();
+    private boolean checkCircular(ListNode head, HashMap<ListNode, ListNode> map) {
+
+        if (head.next == null) {
+
+            return false;
+        } else {
+
+            if (map.containsKey(head.next)) {
+
+                return map.get(head.next) == head;
+
+            } else {
+
+                map.put(head.next, head);
+                return checkCircular(head.next, map);
+            }
+        }
+    }
 
     @Override
     public boolean isCircular(ListNode head) {
+
         if (head == null) {
-            map.clear();
             return false;
-        } else if (head.next == null) {
-            map.clear();
-            return false;
-        } else {
-            if (map.containsKey(head.next)) {
-                if (map.get(head.next) == head) {
-                    map.clear();
-                    return true;
-                } else {
-                    map.clear();
-                    return false;
-                }
-            } else {
-                map.put(head.next, head);
-                return isCircular(head.next);
-            }
         }
+
+        return checkCircular(head, new HashMap<>());
     }
 
-    HashSet<ListNode> set = new HashSet<>();
+    private boolean checkCycles(ListNode head, HashSet<ListNode> set) {
+
+        if (head.next == null) {
+            return false;
+        } else {
+            if (set.contains(head.next)) {
+                return true;
+            } else {
+                set.add(head);
+                return checkCycles(head.next, set);
+            }
+        }
+
+    }
 
     @Override
     public boolean containsCycles(ListNode head) {
         if (head == null) {
-            set.clear();
             return false;
-        } else if (head.next == null) {
-            set.clear();
-            return false;
-        } else {
-            if (set.contains(head.next)) {
-                set.clear();
-                return true;
-            } else {
-                set.add(head);
-                return containsCycles(head.next);
-            }
         }
+        return checkCycles(head, new HashSet<>());
     }
 
+    //This method is a recursive form of bubble sort, except that it does not need to return to the initial head if a swap is made
     @Override
-    public ListNode sort(ListNode head, Comparator comparator) { //!!!!!!!!!!!!!!!!1
+    public ListNode sort(ListNode head, Comparator comparator) {
 
         if (head == null) {
 
             return null;
 
         } else if (head.next == null) {
-
-            System.out.println(head.element + "end");
-            System.out.println();
 
             return head;
 
         } else if (comparator.compare(head.element, head.next.element) > 0) {
 
-            System.out.println(head.element + " 111");
+            //Here, the elements of the current and the next node are swapped
 
             Object swapElement = head.element;
             head.element = head.next.element;
             head.next.element = swapElement;
 
-            System.out.println(head.element + " 000");
-
             sort(head, comparator);
+            return head; //If a swap is made, the current head is returned to the previous call
 
-            return head; //!!!!!!!!!!!!!111
-
+            //This checks whether a swap is made on the next element, in which case current element will sort itself again.
+            //If a swap is made in this case, the value will be returned to the previous call, and the cycle will continue.
         } else if (sort(head.next, comparator) == head.next && head.next.next != null) {
-
-            System.out.println(head.element + " 222");
-
-            //head.next = sort(head, comparator);
 
             return sort(head, comparator);
 
         } else {
 
-            System.out.println(head.element + " 333");
-
+            //If no swap needs to be made on this node or the next, the recursion continues
             return sort(head.next, comparator);
         }
 
@@ -277,23 +266,24 @@ public class RecursiveListManipulator implements IListManipulator {
 
     @Override
     public ListNode map(ListNode head, ITransformation transformation) {
+
         if (head == null) {
+
             return null;
-        }
-        if (head.next == null) {
-            return new ListNode(transformation.transform(head.element));
+
         } else {
-            return new ListNode(transformation.transform(head.element), map(head.next, transformation));
+
+            head.element = transformation.transform(head.element);
+            head.next = map(head.next, transformation);
+            return head;
         }
     }
 
     @Override
-    public Object reduce(ListNode head, IOperator operator, Object initial) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public Object reduce(ListNode head, IOperator operator, Object initial) {
+
         if (head == null) {
             return initial;
-        }
-        if (head.next == null) {
-            return operator.operate(head.element, initial);
         } else {
             return operator.operate(head.element, reduce(head.next, operator, initial));
         }

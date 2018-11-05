@@ -148,7 +148,7 @@ public class IterativeListManipulator implements IListManipulator {
             return false;
         }
 
-        if (head1 == null && head2 == null) {
+        if (head1 == null && head2 == null) { // head2 == null is redundant, but makes the code easier to debug
             return true;
         }
 
