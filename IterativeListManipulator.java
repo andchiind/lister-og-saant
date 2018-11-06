@@ -166,11 +166,7 @@ public class IterativeListManipulator implements IListManipulator {
 
         } while (current1 != null && current2 != null);
 
-        if (current1 != null || current2 != null) {
-            return false;
-        }
-
-        return true;
+        return current1 == null && current2 == null;
     }
 
     @Override
@@ -185,7 +181,7 @@ public class IterativeListManipulator implements IListManipulator {
 
         ListNode copyHead = copy;
 
-        do { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        do { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             if (current.next != null) {
                 copy.next = new ListNode(current.next.element);
@@ -231,8 +227,7 @@ public class IterativeListManipulator implements IListManipulator {
             return head1;
         }
 
-        ListNode currentHead = head1;
-        ListNode current = currentHead;
+        ListNode current = head1;
 
         do {
             current = current.next;
@@ -240,11 +235,11 @@ public class IterativeListManipulator implements IListManipulator {
 
         current.next = head2;
 
-        return currentHead;
+        return head1;
     }
 
     @Override
-    public ListNode flatten(ListNode head) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public ListNode flatten(ListNode head) {
         if (head == null) {
             return null;
         }
@@ -254,9 +249,8 @@ public class IterativeListManipulator implements IListManipulator {
         ListNode current = head;
 
         HashSet<ListNode> set = new HashSet<>();
-        
-        do {
 
+        do {
             set.add(current); // Checks for circular lists
 
             if (current.element instanceof ListNode) {
@@ -285,7 +279,6 @@ public class IterativeListManipulator implements IListManipulator {
             current = current.next;
 
             if (flat.next != null) {
-
                 flat = flat.next;
             }
 
@@ -348,23 +341,28 @@ public class IterativeListManipulator implements IListManipulator {
 
         ListNode current = head;
 
-        boolean swap = true;
+        boolean done = false;
+        boolean hasMadeSwaps = false;
 
-        while (swap) {
+        while (!done) {
 
             if (current.next == null) {
 
-                swap = false;
+                if (!hasMadeSwaps) { //If there have been no swaps made in the loop, the list is sorted
+                    done = true;
+                } else {
+                    current = head; //If there have been swaps made, go through the list again
+                    hasMadeSwaps = false;
+                }
 
             } else if (comparator.compare(current.element, current.next.element) > 0) {
 
                 Object swapElement = current.element;
                 current.element = current.next.element;
                 current.next.element = swapElement;
-                current = head;
+                hasMadeSwaps = true;
 
             } else {
-
                 current = current.next;
             }
         }
@@ -399,5 +397,4 @@ public class IterativeListManipulator implements IListManipulator {
 
         return returnValue;
     }
-
 }

@@ -18,6 +18,7 @@ public class RecursiveListManipulator implements IListManipulator {
 
     @Override
     public int size(ListNode head) {
+
         if (head == null) {
             return 0;
         }
@@ -30,6 +31,7 @@ public class RecursiveListManipulator implements IListManipulator {
 
     @Override
     public boolean contains(ListNode head, Object element) {
+
         if (head == null) {
             return false;
         } else if (head.element.equals(element)) {
@@ -41,6 +43,7 @@ public class RecursiveListManipulator implements IListManipulator {
 
     @Override
     public int count(ListNode head, Object element) {
+
         if (head == null) {
             return 0;
         } else if (head.element.equals(element)) {
@@ -52,6 +55,7 @@ public class RecursiveListManipulator implements IListManipulator {
 
     @Override
     public String convertToString(ListNode head) {
+
         if (head == null) {
             return "";
         }
@@ -64,6 +68,7 @@ public class RecursiveListManipulator implements IListManipulator {
 
     @Override
     public Object getFromFront(ListNode head, int n) throws InvalidIndexException {
+
         if (head == null) {
             throw new InvalidIndexException();
         }
@@ -76,10 +81,11 @@ public class RecursiveListManipulator implements IListManipulator {
 
     @Override
     public Object getFromBack(ListNode head, int n) throws InvalidIndexException {
+
         if (head == null) {
             throw new InvalidIndexException();
         }
-        if (size(head) - 1 == n) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   HIGH COMPLEXITY
+        if (size(head) - 1 == n) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   HIGH COMPLEXITY
             return head.element;
         } else {
             return getFromFront(head.next, n);
@@ -102,6 +108,7 @@ public class RecursiveListManipulator implements IListManipulator {
 
     @Override
     public ListNode deepCopy(ListNode head) {
+
         if (head == null) {
             return null;
         }
@@ -113,6 +120,7 @@ public class RecursiveListManipulator implements IListManipulator {
     }
 
     private boolean checkDuplicates(ListNode head, HashSet<Object> elementSet) {
+
         if (head == null) {
             return false;
         } else {
@@ -136,6 +144,7 @@ public class RecursiveListManipulator implements IListManipulator {
     }
 
     private ListNode appendList(ListNode head1, ListNode head2) { //This method reduces the number of checks per method call
+
         if (head1.next == null) {
             head1.next = head2;
             return head1;
@@ -147,6 +156,7 @@ public class RecursiveListManipulator implements IListManipulator {
 
     @Override
     public ListNode append(ListNode head1, ListNode head2) {
+
         if (head2 == null) {
             return head1;
         }
@@ -207,8 +217,11 @@ public class RecursiveListManipulator implements IListManipulator {
     private boolean checkCycles(ListNode head, HashSet<ListNode> set) {
 
         if (head.next == null) {
+
             return false;
+
         } else {
+
             if (set.contains(head.next)) {
                 return true;
             } else {
@@ -227,7 +240,13 @@ public class RecursiveListManipulator implements IListManipulator {
         return checkCycles(head, new HashSet<>());
     }
 
-    //This method is a recursive form of bubble sort, except that it does not need to return to the initial head if a swap is made
+    /**
+     * This method is a recursive form of bubble sort, except that it does not need to return to the initial head if a swap is made.
+     * @param head the head of the list
+     * @param comparator the ordering to be used
+     * @return the head of the sorted list
+     */
+
     @Override
     public ListNode sort(ListNode head, Comparator comparator) {
 
@@ -283,8 +302,11 @@ public class RecursiveListManipulator implements IListManipulator {
     public Object reduce(ListNode head, IOperator operator, Object initial) {
 
         if (head == null) {
+
             return initial;
+
         } else {
+
             return operator.operate(head.element, reduce(head.next, operator, initial));
         }
     }
